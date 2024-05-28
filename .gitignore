@@ -1,5 +1,7 @@
 bin
 *.o
+*.out
+.vscode
 
 # Logs
 logs
@@ -25,6 +27,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-.vscode
-.vite
