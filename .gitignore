@@ -1,0 +1,4 @@
+bin
+*.o
+node_modules
+dist
