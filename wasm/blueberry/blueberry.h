@@ -1,8 +1,6 @@
 #ifndef BLUEBERRY_H
 #define BLUEBERRY_H
 
-#include <stdlib.h>
-
 #define PEACH_IMPLEMENTATION
 #include "peach/peach.h"
 

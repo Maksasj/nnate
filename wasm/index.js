@@ -14,12 +14,27 @@ function make_environment(...envs) {
     });
 }
 
+function rand() {
+    return Math.floor(Math.random() * 65535);
+}
+
 WebAssembly.instantiateStreaming(fetch('./wasm.wasm'), {
-    "env": make_environment()
+    env: make_environment({
+        "rand": rand,
+        "powf": Math.pow
+    })
 }).then(w0 => {
     w = w0;
     console.log(w);
 
-    let val = w.instance.exports.run();
-    console.log(val);
-})
+    const model = w.instance.exports.create_model();
+
+    console.log(w.instance.exports.train(model));
+    console.log(w.instance.exports.train(model));
+    console.log(w.instance.exports.train(model));
+    console.log(w.instance.exports.train(model));
+    console.log(w.instance.exports.train(model));
+    console.log(w.instance.exports.train(model));
+});
+
+

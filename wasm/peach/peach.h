@@ -1,22 +1,29 @@
 #ifndef PEACH_H
 #define PEACH_H
 
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+*/
 
 typedef float peach_float_t;
 
 #define PEACH_INLINE static inline
+
 #define PEACH_EULER_NUMBER 2.71828182846
+#define PEACH_RAND_MAX 65535
+#define PEACH_NULL ((void*) 0)
 
 #define PEACH_MULTIPLY(A, B) (A) * (B)
-#define PEACH_RANDOM_FLOAT (rand() / (peach_float_t) RAND_MAX)
+#define PEACH_RANDOM_FLOAT (rand() / (peach_float_t) PEACH_RAND_MAX)
 #define PEACH_MATRIX_AT(M, ROW, COL) ((M)->value[(ROW) * M->cols + (COL)])
 
+#include "../walloc.h"
+
 #ifndef PEACH_ASSERT
-    #include <assert.h>
+    // #include <assert.h>
     #define PEACH_ASSERT(EXP) assert((EXP))
 #endif
 
@@ -84,7 +91,8 @@ PEACH_INLINE peach_matrix_t* paech_new_matrix(unsigned int rows, unsigned int co
     matrix->cols = cols;
     
     matrix->value = malloc(size);
-    memset(matrix->value, 0, size);
+
+    peach_matrix_fill(matrix, 0.0f);
 
     return matrix;
 }
@@ -119,11 +127,9 @@ PEACH_INLINE void peach_matrix_fill(peach_matrix_t* target, peach_float_t value)
     const unsigned int rows = target->rows;
     const unsigned int cols = target->cols;
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
             PEACH_MATRIX_AT(target, i, j) = value;
-        }
-    }
 }
 
 PEACH_INLINE void peach_matrix_rand(peach_matrix_t* target, peach_float_t min, peach_float_t max) {
@@ -354,8 +360,8 @@ PEACH_INLINE void peach_matrix_apply_relu(peach_matrix_t* target) {
 }
 
 PEACH_INLINE void peach_matrix_print(peach_matrix_t* m) {
-    if(m == NULL) {
-        printf("NULL\n");
+    if(m == PEACH_NULL) {
+        printf("PEACH_NULL\n");
         return;
     }
 

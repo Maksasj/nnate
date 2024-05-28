@@ -1,16 +1,15 @@
-int run() {
-
-    return 69;
-}
-
-/*
-#include <time.h>
-
 #include "blueberry/blueberry.h"
 
-int main() {
-    srand(time(0));
+BlueBerryModel* create_model() {
+    int arc[] = { 2, 2, 1 };
+    BlueBerryModel* model = blueb_new_model(arc, 3);
 
+    blueb_rand_model(model, -1.0f, 1.0f);
+
+    return model;
+}
+
+float train(BlueBerryModel* model) {
     peach_matrix_t* inputs[] = {
         paech_new_matrix(1, 2),
         paech_new_matrix(1, 2),
@@ -24,6 +23,7 @@ int main() {
         paech_new_matrix(1, 1),
         paech_new_matrix(1, 1),
     };
+
 
     for(int i = 0; i < 4; ++i) {
         peach_matrix_fill(inputs[i], 0.0f);
@@ -40,23 +40,12 @@ int main() {
     // Setup outputs
     PEACH_MATRIX_AT(outputs[3], 0, 0) = 1.0f;
 
-    int arc[] = { 2, 2, 1 };
-    BlueBerryModel* model = blueb_new_model(arc, 3);
-    blueb_rand_model(model, -1.0f, 1.0f);
-
-    blueb_train_gradient_descent(model, inputs, outputs, 4, 10000, 0.05f);
-
-    printf("Cost %f\n", blueb_mse_cost(model, inputs, outputs, 4));
+    blueb_train_gradient_descent(model, inputs, outputs, 4, 1, 0.05f);
 
     for(int i = 0; i < 4; ++i) {
-        printf("Test case: %d\n", i);
-        blueb_feedforward(model, inputs[i]);
-
-        peach_matrix_print(model->neurons[model->count - 1]);
+        peach_free_matrix(inputs[i]);
+        peach_free_matrix(outputs[i]);
     }
 
-    blueb_free_model(model);
-
-    return 0; 
+    return blueb_mse_cost(model, inputs, outputs, 4); 
 }
-*/
