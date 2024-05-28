@@ -37,15 +37,15 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: cd frontend && pnpm install
+        run: pnpm install
 
       - name: Build
-        run: cd frontend && pnpm build
+        run: pnpm build
 
       - name: Create artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: frontend/dist
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
