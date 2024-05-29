@@ -31,7 +31,7 @@ typedef struct lemon_chunk_t {
 
 static lemon_byte_t* lemon_memp; 
 
-LEMON_INLINE void lemon_init();
+LEMON_INLINE void lemon_init(lemon_byte_t* heap, lemon_size_t size);
 
 LEMON_INLINE void* lemon_malloc(lemon_size_t size);
 LEMON_INLINE void lemon_free(void* block);

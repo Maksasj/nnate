@@ -18,23 +18,24 @@ function rand() {
     return Math.floor(Math.random() * 65535);
 }
 
+function assert(exp) {
+
+}
+
 WebAssembly.instantiateStreaming(fetch('./wasm.wasm'), {
     env: make_environment({
         "rand": rand,
-        "powf": Math.pow
+        "powf": Math.pow,
+        "assert": assert
     })
 }).then(w0 => {
     w = w0;
     console.log(w);
-
+    
     const model = w.instance.exports.create_model();
 
-    console.log(w.instance.exports.train(model));
-    console.log(w.instance.exports.train(model));
-    console.log(w.instance.exports.train(model));
-    console.log(w.instance.exports.train(model));
-    console.log(w.instance.exports.train(model));
-    console.log(w.instance.exports.train(model));
+    while(true)
+        console.log(w.instance.exports.train(model));
 });
 
 
