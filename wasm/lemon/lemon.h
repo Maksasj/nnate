@@ -1,13 +1,26 @@
 #ifndef LEMON_H
 #define LEMON_H
 
-typedef unsigned long long lemon_size_t;
-typedef unsigned char lemon_byte_t;
+typedef unsigned char lemon_u8_t;
+typedef unsigned short lemon_u16_t;
+typedef unsigned int lemon_u32_t;
+typedef unsigned long long lemon_u64_t;
+
+typedef signed char lemon_i8_t;
+typedef signed short lemon_i16_t;
+typedef signed int lemon_i32_t;
+typedef signed long long lemon_i64_t;
+
+typedef lemon_u64_t lemon_size_t;
+typedef lemon_u8_t lemon_byte_t;
 
 // Fingerprint is used for memory corruption
 #define LEMON_FINGERPRINT 0x824d268524c2d0c2 
 #define LEMON_NULL ((void*) 0)
-#define LEMON_INLINE static inline
+
+#ifndef LEMON_INLINE
+    #define LEMON_INLINE static inline
+#endif
 
 #ifndef LEMON_ASSERT
     #include <assert.h>
@@ -31,16 +44,25 @@ typedef struct lemon_chunk_t {
 
 static lemon_byte_t* lemon_memp; 
 
+LEMON_INLINE void lemon_init_u64(lemon_byte_t* heap, lemon_u64_t size);
+LEMON_INLINE void lemon_init_i64(lemon_byte_t* heap, lemon_i64_t size);
+LEMON_INLINE void lemon_init_u32(lemon_byte_t* heap, lemon_u32_t size);
+LEMON_INLINE void lemon_init_i32(lemon_byte_t* heap, lemon_i32_t size);
 LEMON_INLINE void lemon_init(lemon_byte_t* heap, lemon_size_t size);
 
+LEMON_INLINE void* lemon_malloc_u64(lemon_u64_t size);
+LEMON_INLINE void* lemon_malloc_i64(lemon_i64_t size);
+LEMON_INLINE void* lemon_malloc_u32(lemon_u32_t size);
+LEMON_INLINE void* lemon_malloc_i32(lemon_i32_t size);
 LEMON_INLINE void* lemon_malloc(lemon_size_t size);
+
 LEMON_INLINE void lemon_free(void* block);
 
 LEMON_INLINE void lemon_print();
 
 #ifdef LEMON_IMPLEMENTATION
 
-LEMON_INLINE void lemon_init(lemon_byte_t* heap, lemon_size_t size) {
+LEMON_INLINE void lemon_init_u64(lemon_byte_t* heap, lemon_u64_t size) {
     lemon_memp = heap;
 
     lemon_chunk_t* first = (lemon_chunk_t*) lemon_memp;
@@ -52,7 +74,23 @@ LEMON_INLINE void lemon_init(lemon_byte_t* heap, lemon_size_t size) {
     first->fingerprint = LEMON_FINGERPRINT;
 }
 
-LEMON_INLINE void* lemon_malloc(lemon_size_t size) {
+LEMON_INLINE void lemon_init_i64(lemon_byte_t* heap, lemon_i64_t size) {
+    lemon_init_u64(heap, (lemon_u64_t) size);
+}
+
+LEMON_INLINE void lemon_init_u32(lemon_byte_t* heap, lemon_u32_t size) {
+    lemon_init_u64(heap, (lemon_u64_t) size);
+}
+
+LEMON_INLINE void lemon_init_i32(lemon_byte_t* heap, lemon_i32_t size) {
+    lemon_init_u64(heap, (lemon_u64_t) size);
+}
+
+LEMON_INLINE void lemon_init(lemon_byte_t* heap, lemon_size_t size) {
+    lemon_init_u64(heap, (lemon_u64_t) size);
+}
+
+LEMON_INLINE void* lemon_malloc_u64(lemon_u64_t size) {
     lemon_chunk_t* chunk = (lemon_chunk_t*) lemon_memp; 
     
     LEMON_ASSERT(chunk->fingerprint == LEMON_FINGERPRINT);
@@ -80,6 +118,22 @@ LEMON_INLINE void* lemon_malloc(lemon_size_t size) {
     chunk->next = next;
 
     return ret;  
+}
+
+LEMON_INLINE void* lemon_malloc_i64(lemon_i64_t size) {
+    return lemon_malloc_u64((lemon_u64_t) size);
+}
+
+LEMON_INLINE void* lemon_malloc_u32(lemon_u32_t size) {
+    return lemon_malloc_u64((lemon_u64_t) size);
+}
+
+LEMON_INLINE void* lemon_malloc_i32(lemon_i32_t size) {
+    return lemon_malloc_u64((lemon_u64_t) size);
+}
+
+LEMON_INLINE void* lemon_malloc(lemon_size_t size) {
+    return lemon_malloc_u64(size);
 }
 
 LEMON_INLINE void lemon_free(void* ptr) {
