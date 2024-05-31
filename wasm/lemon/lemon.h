@@ -11,7 +11,11 @@ typedef signed short lemon_i16_t;
 typedef signed int lemon_i32_t;
 typedef signed long long lemon_i64_t;
 
-typedef lemon_u64_t lemon_size_t;
+#ifndef LEMON_SIZE_T
+    #define LEMON_SIZE_T lemon_u64_t
+#endif
+
+typedef LEMON_SIZE_T lemon_size_t;
 typedef lemon_u8_t lemon_byte_t;
 
 // Fingerprint is used for memory corruption
@@ -42,7 +46,7 @@ typedef struct lemon_chunk_t {
 	struct lemon_chunk_t* prev;
 } lemon_chunk_t;
 
-static lemon_byte_t* lemon_memp; 
+extern lemon_byte_t* lemon_memp; 
 
 LEMON_INLINE void lemon_init_u64(lemon_byte_t* heap, lemon_u64_t size);
 LEMON_INLINE void lemon_init_i64(lemon_byte_t* heap, lemon_i64_t size);
@@ -61,6 +65,8 @@ LEMON_INLINE void lemon_free(void* block);
 LEMON_INLINE void lemon_print();
 
 #ifdef LEMON_IMPLEMENTATION
+
+lemon_byte_t* lemon_memp = LEMON_NULL;
 
 LEMON_INLINE void lemon_init_u64(lemon_byte_t* heap, lemon_u64_t size) {
     lemon_memp = heap;

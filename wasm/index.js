@@ -60,8 +60,6 @@ function nnate_create_peach_matrix(w, matrix) {
 }
 
 async function main() {
-    let buffer;
-
     const w = await WebAssembly.instantiateStreaming(fetch('./wasm.wasm'), {
         env: make_environment({
             "rand": rand,
@@ -70,10 +68,9 @@ async function main() {
         })
     })
 
-    buffer = new Uint8Array(w.instance.exports.memory.buffer);
-
     console.log(w);
 
+    /*
     const ex = w.instance.exports;
     const memory = ex.memory;
 
@@ -81,6 +78,13 @@ async function main() {
     const heap = new Uint8Array(memory.buffer, 0, 4096);
     ex.lemon_init_i32(heap.byteOffset, 4096);
 
+    console.log(heap);
+    console.log(ex.lemon_malloc_i32(4));
+    
+    console.log(heap);
+    console.log(ex.lemon_malloc_i32(4));
+
+    /*
     const itmp = nnate_create_float_array(w, [
         0.0, 0.0,
         1.0, 0.0,
@@ -121,6 +125,7 @@ async function main() {
     // ex.blueb_train_gradient_descent(model, inputs, outputs, 4, 1, 0.05);
 
     // console.log(ex.blueb_mse_cost(model, inputs, outputs, 4));
+    */
     /*
     arch.set([2, 2, 1]);
 
