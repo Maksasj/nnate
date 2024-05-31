@@ -7,7 +7,7 @@ function make_environment(...envs) {
                     return env[prop];
                 }
             }
-            return (...args) => {console.error("NOT IMPLEMENTED: "+prop, args)}
+            return (...args) => { console.error("NOT IMPLEMENTED: " + prop, args) }
         }
     });
 }
@@ -17,7 +17,7 @@ function rand() {
 }
 
 function assert(exp) {
-    if(exp === 0)
+    if (exp === 0)
         console.error("WASM assertion failed");
 }
 
@@ -83,8 +83,8 @@ async function main() {
     
     console.log(heap);
     console.log(ex.lemon_malloc_i32(4));
+*/
 
-    /*
     const itmp = nnate_create_float_array(w, [
         0.0, 0.0,
         1.0, 0.0,
@@ -94,6 +94,7 @@ async function main() {
 
     const inputs = ex.paech_new_matrix(4, 2);
     ex.peach_matrix_fill_values(inputs, itmp);
+    /*
 
     const otmp = nnate_create_float_array(w, [
         0.0, 0.0,
