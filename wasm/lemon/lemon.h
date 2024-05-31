@@ -110,8 +110,8 @@ LEMON_INLINE void* lemon_malloc_u64(lemon_u64_t size) {
 
     LEMON_ASSERT(chunk->fingerprint == LEMON_FINGERPRINT);
 
-    void* ret = chunk + sizeof(lemon_chunk_t);
-    lemon_chunk_t* next = (lemon_chunk_t*) ((lemon_byte_t* )ret + size);
+    void* ret = (void*) ((lemon_byte_t*) chunk) + sizeof(lemon_chunk_t);
+    lemon_chunk_t* next = (lemon_chunk_t*) (((lemon_byte_t*) ret) + size);
 
     next->size = chunk->size - sizeof(lemon_chunk_t) - size;
     next->next = LEMON_NULL;
@@ -146,7 +146,7 @@ LEMON_INLINE void lemon_free(void* ptr) {
     if(ptr == LEMON_NULL)
         return;
     
-    lemon_chunk_t* chunk = (lemon_chunk_t*) ptr - sizeof(lemon_chunk_t);
+    lemon_chunk_t* chunk = (lemon_chunk_t*) (((lemon_byte_t*) ptr) - sizeof(lemon_chunk_t));
     LEMON_ASSERT(chunk->fingerprint == LEMON_FINGERPRINT);
 
     lemon_chunk_t* prev = chunk->prev;

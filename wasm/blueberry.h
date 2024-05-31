@@ -82,6 +82,7 @@ BlueBerryModel* blueb_copy_model(BlueBerryModel* src) {
     const peach_size_t archSize = src->count;
 
     BlueBerryModel* model = (BlueBerryModel*) BLUEB_MALLOC(sizeof(BlueBerryModel));
+    model->count = archSize;
 
     model->weights = (peach_matrix_t**) BLUEB_MALLOC(sizeof(peach_matrix_t*) * (archSize - 1));
     model->biases =  (peach_matrix_t**) BLUEB_MALLOC(sizeof(peach_matrix_t*) * (archSize - 1));
@@ -102,6 +103,7 @@ BlueBerryModel* blueb_copy_model_arc(BlueBerryModel* src) {
     const peach_size_t archSize = src->count;
 
     BlueBerryModel* model = (BlueBerryModel*) BLUEB_MALLOC(sizeof(BlueBerryModel));
+    model->count = archSize;
 
     model->weights = (peach_matrix_t**) BLUEB_MALLOC(sizeof(peach_matrix_t*) * (archSize - 1));
     model->biases =  (peach_matrix_t**) BLUEB_MALLOC(sizeof(peach_matrix_t*) * (archSize - 1));
@@ -254,7 +256,7 @@ void blueb_finite_difference(
         // Biases
         for(peach_size_t b = 0; b < layers; ++b) {
             peach_matrix_t* biases = model->biases[b];
-            peach_matrix_t* gBiases = gradient->weights[b];
+            peach_matrix_t* gBiases = gradient->biases[b];
 
             const peach_size_t size = biases->rows * biases->cols;
             
@@ -309,7 +311,7 @@ void blueb_finite_difference_arr(
         // Biases
         for(peach_size_t b = 0; b < layers; ++b) {
             peach_matrix_t* biases = model->biases[b];
-            peach_matrix_t* gBiases = gradient->weights[b];
+            peach_matrix_t* gBiases = gradient->biases[b];
 
             const peach_size_t size = biases->rows * biases->cols;
             
@@ -328,11 +330,16 @@ void blueb_finite_difference_arr(
 }
 
 void blueb_learn_gradient(BlueBerryModel* model, BlueBerryModel* gradient, peach_float_t learningRate) {
+    PEACH_ASSERT(model->count == gradient->count);
+    
     const peach_size_t layers = model->count - 1;
 
     for(peach_size_t w = 0; w < layers; ++w) {
         peach_matrix_t* weights = model->weights[w];
         peach_matrix_t* gWeights = gradient->weights[w];
+
+        PEACH_ASSERT(weights->rows == gWeights->rows);
+        PEACH_ASSERT(weights->cols == gWeights->cols);
 
         peach_matrix_scale(gWeights, learningRate);
         peach_matrix_sub_target(weights, gWeights);
@@ -340,7 +347,10 @@ void blueb_learn_gradient(BlueBerryModel* model, BlueBerryModel* gradient, peach
 
     for(peach_size_t b = 0; b < layers; ++b) {
         peach_matrix_t* biases = model->biases[b];
-        peach_matrix_t* gBiases = gradient->weights[b];
+        peach_matrix_t* gBiases = gradient->biases[b];
+
+        PEACH_ASSERT(biases->rows == gBiases->rows);
+        PEACH_ASSERT(biases->cols == gBiases->cols);
 
         peach_matrix_scale(gBiases, learningRate);
         peach_matrix_sub_target(biases, gBiases);
@@ -366,7 +376,7 @@ void blueb_free_model(BlueBerryModel* model) {
 }
 
 void blueb_train_gradient_descent(BlueBerryModel* model, peach_matrix_t* inputs, peach_matrix_t* outputs, peach_size_t count, peach_size_t epochs,peach_float_t learningRate) {
-    BlueBerryModel* gradient = blueb_copy_model(model);
+    BlueBerryModel* gradient = blueb_copy_model_arc(model);
 
     for(peach_size_t e = 0; e < epochs; ++e) {
         blueb_finite_difference(model, gradient, inputs, outputs, count);

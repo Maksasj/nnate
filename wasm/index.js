@@ -33,8 +33,6 @@ function nnate_create_int32_array(w, list) {
 
     const ptr = ex.lemon_malloc_i32(i32size * length);
 
-    console.log(i32size * length);
-
     const array = new Int32Array(memory.buffer, ptr, length);
     array.set(list);
 
@@ -70,86 +68,42 @@ async function main() {
 
     console.log(w);
 
-    /*
     const ex = w.instance.exports;
     const memory = ex.memory;
 
     // Initializing heap
-    const heap = new Uint8Array(memory.buffer, 0, 4096);
+    const heap = new Uint8Array(memory.buffer, ex.__heap_base, 4096);
     ex.lemon_init_i32(heap.byteOffset, 4096);
-
-    console.log(heap);
-    console.log(ex.lemon_malloc_i32(4));
-    
-    console.log(heap);
-    console.log(ex.lemon_malloc_i32(4));
-*/
 
     const itmp = nnate_create_float_array(w, [
         0.0, 0.0,
         1.0, 0.0,
         0.0, 1.0,
         1.0, 1.0
-    ])
+    ]);
 
     const inputs = ex.paech_new_matrix(4, 2);
     ex.peach_matrix_fill_values(inputs, itmp);
-    /*
 
     const otmp = nnate_create_float_array(w, [
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0
-    ])
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ]);
 
     const outputs = ex.paech_new_matrix(4, 1);
     ex.peach_matrix_fill_values(outputs, otmp);
 
-    console.log(heap);
-
     // Create model
     const arch = nnate_create_int32_array(w, [2, 2, 1]);
-
     let model = ex.blueb_new_model(arch, 3);
     ex.blueb_rand_model(model, -1.0, 1.0);
 
-    // ex.blueb_train_gradient_descent(model, inputs, outputs, 4, 1, 0.05);
-
-    // console.log(ex.blueb_mse_cost(model, inputs, outputs, 4));
-
-    console.log(ex.train(model));
-    // 
-    // for(let i = 0; i < 1000; ++i)
-    //     console.log(ex.train(model));
-// 
-    // ex.blueb_train_gradient_descent(model, inputs, outputs, 4, 1, 0.05);
-
-    // console.log(ex.blueb_mse_cost(model, inputs, outputs, 4));
-    */
-    /*
-    arch.set([2, 2, 1]);
-
-    create_model();
-
-
-    console.log(model);
-    console.log(blueb_new_model);
-    console.log(memory);
-    */
-
-    /*
-    array.set([3, 15, 18, 4, 2])
-  
-    // Call the function and display the results.
-    const result = sumArrayInt32(array.byteOffset, array.length)
-    console.log(`sum([${array.join(',')}]) = ${result}`)
-  
-    // This does the same thing!
-    if (result == sumArrayInt32(0, 5)) {
-      console.log(`Memory is an integer array starting at 0`)
+    for(let i = 0; i < 10000; ++i) {
+        ex.blueb_train_gradient_descent(model, inputs, outputs, 4, 1, 0.05)
+        console.log(ex.blueb_mse_cost(model, inputs, outputs, 4));
     }
-    */
 }
 
 main().then(() => console.log('Main finished'))
