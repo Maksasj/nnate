@@ -22,16 +22,16 @@ init({
   const memory = ex.memory;
 
   // Initializing heap
-  const heap = new Uint8Array(memory.buffer, 0, 4096);
+  const heap = new Uint8Array((memory as any).buffer, 0, 4096);
   console.log(heap);
 
-  ex.lemon_init_i32(heap.byteOffset, 4096);
+  // ex.lemon_init_i32(heap.byteOffset, 4096);
 
-  console.log(heap);
-  console.log(ex.lemon_malloc_i32(4));
+  // console.log(heap);
+  // console.log(ex.lemon_malloc_i32(4));
 
-  console.log(heap);
-  console.log(ex.lemon_malloc_i32(4));
+  // console.log(heap);
+  // console.log(ex.lemon_malloc_i32(4));
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
