@@ -1,79 +1,127 @@
-import './index.css'
+import init from './blueberry.wasm?init'
+import { initializeHeap } from './blueberry_heap';
 
-import '@radix-ui/themes/styles.css';
+import { BlueberryAllocation, BlueberryAllocationEnum, Matrix, Pointer, bluebCreateInt32Array, bluebMapMatrix, bluebMapModel } from './blueberry_memory';
+import { make_environment, rand, assert, } from './blueberry_utils'
 
-// const u8size: number = 1;
-// const u16size: number = 2;
-const u32size: number = 4;
-// const u64size: number = 8;
+export type BlueberryInstance = {
+    wasm: WebAssembly.Instance;
 
-const floatSize: number = 4;
-// const doubleSize: number = 8;
+    // Lets track all allocations, if we ever need to clear
+    allocations: BlueberryAllocation[];
+};
 
-export function blueb_create_int32_array(instance: WebAssembly.Instance, list: number[]): number {
-    const ex = instance.exports;
-    const memory = ex.memory;
+export let blueberryInstance: BlueberryInstance | null = null;
 
-    const length = list.length;
+async function initBlueberry() {
+    const env = make_environment({
+        "rand": rand,
+        "powf": Math.pow,
+        "assert": assert
+    }) as any;
 
-    const ptr = (ex.lemon_malloc_i32 as Function)(u32size * length);
+    init({
+        env: env
+    }).then((w) => {
+        if (blueberryInstance !== null)
+            return;
 
-    const array = new Int32Array((memory as any).buffer, ptr, length);
-    array.set(list);
+        blueberryInstance = {
+            wasm: w,
+            allocations: []
+        };
 
-    return ptr;
+        initializeHeap(blueberryInstance);
+
+        const inputs = bluebCreateMatrix([
+            [0.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 0.0],
+            [1.0, 1.0]
+        ]);
+
+        const outputs = bluebCreateMatrix([
+            [0.0],
+            [0.0],
+            [0.0],
+            [1.0]
+        ]);
+
+        // Create model
+        let model = bluebCreateModel([2, 2, 1]);
+
+        // Train network and print result
+        for (let i = 0; i < 100; ++i) {
+            bluebTrainGradientDescent(model, inputs, outputs, 4, 1, 0.05);
+
+            const cost = bluebMseCost(model, inputs, outputs, 4);
+            console.log(cost);
+        }
+
+        console.log(bluebMapModel(model));
+
+        // console.log();
+    })
 }
 
-export function blueb_create_float_array(instance: WebAssembly.Instance, list: number[]): number {
-    const ex = instance.exports;
-    const memory = ex.memory;
+initBlueberry();
 
-    const length = list.length;
-
-    const ptr = (ex.lemon_malloc_i32 as Function)(floatSize * length);
-    const array = new Float32Array((memory as any).buffer, ptr, length);
-    array.set(list);
-
-    return ptr;
-}
-
-type Matrix = number[][];
-
-export function blueb_create_matrix(instance: WebAssembly.Instance, matrix: Matrix): number {
-    const ex = instance.exports;
+export function bluebCreateMatrix(matrix: Matrix): Pointer {
+    if (blueberryInstance === null)
+        return null;
 
     let arr: number[] = [];
-
     for (var row of matrix)
         arr = arr.concat(row);
 
-    console.log(arr);
+    const ex = blueberryInstance.wasm.exports;
 
-    const itmp = blueb_create_float_array(instance, arr); // Todo clear this
-    const inputs = (ex.paech_new_matrix as Function)(matrix[0].length, matrix.length);
-    (ex.peach_matrix_fill_values as Function)(inputs, itmp);
+    const matrixPtr = (ex.paech_new_matrix as Function)(matrix[0].length, matrix.length);
+    blueberryInstance.allocations.push({
+        ptr: matrixPtr,
+        kind: BlueberryAllocationEnum.Matrix
+    });
 
-    return inputs;
+    let mapped = bluebMapMatrix(matrixPtr);
+
+    if(mapped == null)
+        return null;
+
+    mapped.value.set(arr);
+
+    return matrixPtr;
 }
 
-type BlueBerryModelArch = number[];
+export function bluebCreateModel(arr: number[]): Pointer {
+    if (blueberryInstance === null)
+        return null;
 
-export function blueb_create_model(instance: WebAssembly.Instance, arr: BlueBerryModelArch): number {
-    // const ex = instance.exports;
-    // 
-    // const ar = blueb_create_int32_array(instance, arch);
-    // let model = (ex.blueb_new_model as Function)(ar, arch.length);
-    // 
-    // (ex.blueb_rand_model as Function)(model, -1.0, 1.0);
-    // (ex.lemon_free as Function)(ar);
-    // 
-    // return model;
-
-    const ex = instance.exports;
-    const arch = blueb_create_int32_array(instance, arr);
+    const ex = blueberryInstance.wasm.exports;
+    const arch = bluebCreateInt32Array(arr);
     let model = (ex.blueb_new_model as Function)(arch, arr.length);
     (ex.blueb_rand_model as Function)(model, -1.0, 1.0);
     // (ex.lemon_free as Function)(arch); // Todo fix this
 
+    blueberryInstance.allocations.push({
+        ptr: model,
+        kind: BlueberryAllocationEnum.Model
+    });
+
     return model;
+}
+
+export function bluebTrainGradientDescent(model: Pointer, inputs: Pointer, outputs: Pointer, sampleCount: number, epoch: number, learningRate: number) {
+    if (blueberryInstance === null)
+        return;
+
+    const ex = blueberryInstance.wasm.exports;
+    (ex.blueb_train_gradient_descent as Function)(model, inputs, outputs, sampleCount, epoch, learningRate);
+}
+
+export function bluebMseCost(model: Pointer, inputs: Pointer, outputs: Pointer, sampleCount: number): number {
+    if (blueberryInstance === null)
+        return 0.0;
+
+    const ex = blueberryInstance.wasm.exports;
+    return (ex.blueb_mse_cost as Function)(model, inputs, outputs, sampleCount);
 }

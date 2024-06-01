@@ -15,6 +15,7 @@
 #define PEACH_PRINT printf
 #define PEACH_RAND rand
 
+#define BLUEB_INLINE
 #define BLUEB_MALLOC lemon_malloc
 #define BLUEB_FREE lemon_free
 #define BLUEB_PRINTF printf

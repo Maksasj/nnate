@@ -81,6 +81,10 @@ PEACH_INLINE peach_matrix_t* paech_copy_matrix_empty(peach_matrix_t* src);
 
 PEACH_INLINE void peach_free_matrix(peach_matrix_t* matrix);
 
+PEACH_INLINE peach_size_t peach_get_matrix_rows(peach_matrix_t* matrix);
+PEACH_INLINE peach_size_t peach_get_matrix_cols(peach_matrix_t* matrix);
+PEACH_INLINE peach_float_t* peach_get_matrix_values(peach_matrix_t* matrix);
+
 PEACH_INLINE void peach_matrix_fill(peach_matrix_t* target, peach_float_t value);
 PEACH_INLINE void peach_matrix_rand(peach_matrix_t* target, peach_float_t min, peach_float_t max);
 PEACH_INLINE void peach_matrix_fill_values(peach_matrix_t* dst, peach_float_t* values);
@@ -168,6 +172,18 @@ PEACH_INLINE peach_matrix_t* paech_copy_matrix_empty(peach_matrix_t* src) {
 PEACH_INLINE void peach_free_matrix(peach_matrix_t* matrix) {
     PEACH_FREE(matrix->value);
     PEACH_FREE(matrix);
+}
+
+PEACH_INLINE peach_size_t peach_get_matrix_rows(peach_matrix_t* matrix) {
+    return matrix->rows;
+}
+
+PEACH_INLINE peach_size_t peach_get_matrix_cols(peach_matrix_t* matrix) {
+    return matrix->cols;
+}
+
+PEACH_INLINE peach_float_t* peach_get_matrix_values(peach_matrix_t* matrix) {
+    return matrix->value;
 }
 
 PEACH_INLINE void peach_matrix_fill(peach_matrix_t* target, peach_float_t value) {
