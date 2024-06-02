@@ -6,7 +6,7 @@ import './index.css'
 
 import '@radix-ui/themes/styles.css';
 
-import { BlueberryInstance, blueberryInstance } from './blueberry.ts';
+import { BlueberryInstance, blueberryInstance } from 'blueb.js';
 
 export const BlueberryContext = createContext<BlueberryInstance | null>(null);
 
