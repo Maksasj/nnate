@@ -1,12 +1,17 @@
-import React, { PropsWithChildren, createContext, useEffect, useState } from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { Theme } from '@radix-ui/themes';
-import './index.css'
+import React, {
+  PropsWithChildren,
+  createContext,
+  useEffect,
+  useState,
+} from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import { Theme } from "@radix-ui/themes";
+import "./index.css";
 
-import '@radix-ui/themes/styles.css';
+import "@radix-ui/themes/styles.css";
 
-import { BlueberryInstance, blueberryInstance } from 'blueb.js';
+import { BlueberryInstance, blueberryInstance } from "blueb.js";
 
 export const BlueberryContext = createContext<BlueberryInstance | null>(null);
 
@@ -16,19 +21,24 @@ const WasmContextProvider = (props: PropsWithChildren) => {
   // How to do that ?
   useEffect(() => {
     setTimeout(() => {
+      console.log(blueberryInstance);
       setInstance(blueberryInstance);
-    }, 1000);
-  })
+    }, 5000);
+  });
 
-  return <BlueberryContext.Provider value={instance}>{props.children}</BlueberryContext.Provider>;
-}
+  return (
+    <BlueberryContext.Provider value={instance}>
+      {props.children}
+    </BlueberryContext.Provider>
+  );
+};
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Theme>
       <WasmContextProvider>
         <App />
-      </ WasmContextProvider>
+      </WasmContextProvider>
     </Theme>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
