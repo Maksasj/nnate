@@ -9,7 +9,8 @@ nnate - simple neural network sandbox what you can run in a browser.
 
 Main mission of this project is to playfully teach people how neural networks work under hood, demonstrating learning process on simple logic gates such as **AND**, **NOT**, **XOR** gates and etc, as well as more complex models such as classical written digit recognition.
 
-**Entry for SoMEπ community edition, summer 2024 contest**
+**Entry for [SoMEπ community edition, summer 2024 contest](
+https://some.3b1b.co/)**
 
 > And yet yet again, nnate is a not a new javascript framework !
 
