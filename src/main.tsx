@@ -2,6 +2,7 @@ import React, {
   PropsWithChildren,
   createContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import ReactDOM from "react-dom/client";
@@ -11,20 +12,25 @@ import "./index.css";
 
 import "@radix-ui/themes/styles.css";
 
-import { BlueberryInstance, blueberryInstance } from "blueb.js";
+import { BlueberryInstance, bluebInit } from "blueb.js";
 
 export const BlueberryContext = createContext<BlueberryInstance | null>(null);
 
 const WasmContextProvider = (props: PropsWithChildren) => {
   const [instance, setInstance] = useState<BlueberryInstance | null>(null);
-
-  // How to do that ?
+  const isMounted = useRef<boolean>(false);
+  
   useEffect(() => {
-    setTimeout(() => {
-      console.log(blueberryInstance);
-      setInstance(blueberryInstance);
-    }, 5000);
-  });
+    if(isMounted.current)
+      return;
+
+    isMounted.current = true;
+
+    bluebInit().then((blueb) => {
+      console.log(blueb);
+      setInstance(blueb);
+    });
+  }, []);
 
   return (
     <BlueberryContext.Provider value={instance}>
