@@ -12,8 +12,8 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       blueb.js:
-        specifier: ^1.1.15
-        version: 1.1.15
+        specifier: ^1.1.17
+        version: 1.1.17
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1171,8 +1171,8 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  blueb.js@1.1.15:
-    resolution: {integrity: sha512-XpUHwby83puxKzMPRuWZF3r9Wwt80LPd0/BtTZ7Rx53AACPGxmTqEFU5TEf4SiiSa5HVuynHMKpcTb6DOwXEdA==}
+  blueb.js@1.1.17:
+    resolution: {integrity: sha512-AKLfXx9MDhqPNN8EvZRn/FpfdPRum44Chc4XatSiGDV6DdXnP6v8CZAZmi3TOkK3fgTCw7DSwd8AhQQLNOBOMA==}
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -3002,7 +3002,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  blueb.js@1.1.15: {}
+  blueb.js@1.1.17: {}
 
   brace-expansion@1.1.11:
     dependencies:
