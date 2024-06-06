@@ -12,6 +12,7 @@ import "./index.css";
 import "@radix-ui/themes/styles.css";
 
 import { BlueberryInstance, blueberryInstance } from "blueb.js";
+import { GateSimulation, GateType } from "./GateSimulation.tsx";
 
 export const BlueberryContext = createContext<BlueberryInstance | null>(null);
 
@@ -36,9 +37,10 @@ const WasmContextProvider = (props: PropsWithChildren) => {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Theme>
-      <WasmContextProvider>
+      <GateSimulation type={GateType.AND} />
+      {/* <WasmContextProvider>
         <App />
-      </WasmContextProvider>
+      </WasmContextProvider> */}
     </Theme>
   </React.StrictMode>
 );
