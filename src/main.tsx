@@ -12,7 +12,8 @@ import "./index.css";
 import "@radix-ui/themes/styles.css";
 
 import { BlueberryInstance, blueberryInstance } from "blueb.js";
-import { GateSimulation, GateType } from "./GateSimulation.tsx";
+import { GateSimulation } from "./GateSimulation.tsx";
+import { GateType } from "./GateType.tsx";
 
 export const BlueberryContext = createContext<BlueberryInstance | null>(null);
 

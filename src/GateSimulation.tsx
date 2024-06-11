@@ -1,11 +1,11 @@
 import { Flex, Text } from "@radix-ui/themes";
 import { Fragment, useState } from "react";
-import { styled } from "@stitches/react";
 import { Chart } from "react-google-charts";
 
 import AndGateSvg from "../assets/AND_gate.svg?react";
 import AndTruthTableSvg from "../assets/AND_truth_table.svg?react";
 import { GateType } from "./GateType";
+import { Network } from "./Network";
 
 const Description = ({ type }: { type: GateType }) => {
   return (
@@ -23,54 +23,17 @@ const Description = ({ type }: { type: GateType }) => {
   );
 };
 
-type NeuronProps = {
-  value: number; // value should be in interval [0, 1]
-};
-
-const _Neuron = styled(Flex, {
-  borderRadius: "100%",
-  borderColor: "#000",
-  borderWidth: 1,
-  borderStyle: "solid",
-  width: 42,
-  height: 42,
-  backgroundColor: "#fff",
-
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-const Neuron = ({ value }: { value: number }) => {
-  return <_Neuron>{value}</_Neuron>;
-};
-
-type NetworkProps = {
-  layers: number[][];
-  setInputLayer: (inputs: number[]) => void;
-};
-
-const Network = ({ layers, setInputLayer }: NetworkProps) => {
-  return (
-    <Flex align="center" gap="4">
-      {layers.map((layer) => {
-        return (
-          <Flex direction="column" gap="4">
-            {layer.map((value) => (
-              <Neuron value={value} />
-            ))}
-          </Flex>
-        );
-      })}
-    </Flex>
-  );
-};
-
 const SingleArgumentNetwork = () => {
   const [inputLayer, setInputLayer] = useState([0]);
   const [outputLayer, setOutputLayer] = useState([0]);
 
   return (
-    <Network layers={[inputLayer, outputLayer]} setInputLayer={setInputLayer} />
+    <Network
+      input={inputLayer}
+      hidden={[]}
+      output={outputLayer}
+      setInputLayer={setInputLayer}
+    />
   );
 };
 
@@ -79,7 +42,12 @@ const DoubleArgumentNetwork = () => {
   const [outputLayer, setOutputLayer] = useState([0]);
 
   return (
-    <Network layers={[inputLayer, outputLayer]} setInputLayer={setInputLayer} />
+    <Network
+      input={inputLayer}
+      hidden={[]}
+      output={outputLayer}
+      setInputLayer={setInputLayer}
+    />
   );
 };
 
@@ -109,7 +77,7 @@ const options = {
 export const GateSimulation = ({ type }: GateSimulationProps) => {
   const [data, setData] = useState(initialData);
   return (
-    <Flex>
+    <Flex align="center" gap="6">
       <Description type={type} />
       <NeuralNetwork type={type} />
       <Flex direction="column">
